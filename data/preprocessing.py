@@ -1,6 +1,7 @@
 from typing import List
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+import scipy as sp
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 
 random_state = 20
@@ -33,9 +34,10 @@ numerical = [
 
 class Preprocessor:
     def __init__(self, encode_categorical, scale_numeric):
-        self.ss = StandardScaler(with_mean=False, with_std=True)
         self.encode_categorical = encode_categorical
         self.scale_numeric = scale_numeric
+        self.encoder = OneHotEncoder(drop='first', sparse=False)
+        self.sscaler = StandardScaler(with_mean=False, with_std=True)
     
     def fit(
         self, 
@@ -43,7 +45,8 @@ class Preprocessor:
         categorical: List[str] = categorical, 
         numerical: List[str] = numerical,
     ):
-        self.ss.fit(data[numerical])
+        self.encoder.fit(data[categorical].apply(lambda x: x.astype('int')))
+        self.sscaler.fit(data[numerical])
         return self
     
     def transform(
@@ -56,16 +59,24 @@ class Preprocessor:
         data = data.copy()
         
         # Cast data types
-        data[categorical] = data[categorical].apply(lambda x: x.astype('category'))        
+        data[categorical] = data[categorical].apply(lambda x: x.astype('category'))
         data[numerical] = data[numerical].apply(lambda x: x.astype('float'))
 
         # Append dummies as new columns
         if self.encode_categorical:
-            data = pd.get_dummies(data, drop_first=False)
+            # data = pd.get_dummies(data, drop_first=False)
+            encoded = self.encoder.transform(data[categorical])
+            columns = self.encoder.get_feature_names(categorical)
+            data = data.drop(columns=categorical)
+            data[columns] = encoded
+            # data = pd.concat([
+            #     data.drop(columns=categorical),
+            #     pd.DataFrame(encoded, columns=columns)
+            # ], axis=1)
         
         # handle numerical data
         if self.scale_numeric:
-            data[numerical] = self.ss.transform(data[numerical])
+            data[numerical] = self.sscaler.transform(data[numerical])
 
         return data
         
