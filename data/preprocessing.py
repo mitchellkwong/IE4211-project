@@ -86,6 +86,10 @@ def load_datasets(train_file, test_file):
     train_val = pd.read_csv(train_file, index_col=0)
     test = pd.read_csv(test_file, index_col=0)
     train, validation = train_test_split(train_val, test_size=0.2, random_state=random_state)
+
+    #Further train-test split on train data
+    train_train, validation_validation = train_test_split(train, test_size=0.2, random_state=random_state)
+
     
     # Fit preprocessor to train data only
     preprocessor = Preprocessor(encode_categorical=True, scale_numeric=True)
@@ -96,7 +100,7 @@ def load_datasets(train_file, test_file):
     validation = preprocessor.transform(validation)
     test = preprocessor.transform(test)
     
-    return train, validation, test
+    return train, validation, test, train_train, validation_validation
 
 # Check that preprocessing steps are reproducible
 foo, *_ = load_datasets(
