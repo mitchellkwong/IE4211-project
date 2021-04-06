@@ -87,7 +87,7 @@ def load_datasets(train_file, test_file):
     test = pd.read_csv(test_file, index_col=0)
     train, validation = train_test_split(train_val, test_size=0.2, random_state=random_state)
 
-    #Further train-test split on train data
+    #Further train-test split on train data for model tuning
     train_train, validation_validation = train_test_split(train, test_size=0.2, random_state=random_state)
 
     
@@ -116,7 +116,7 @@ bar, *_ = load_datasets(
 assert all(foo == bar), 'Preprocessing not reproducible!'
 
 # Module exports
-train, validation, test = load_datasets(
+train, validation, test , train_train, validation_validation= load_datasets(
     train_file = './data/Data-train.csv', 
     test_file = './data/Data-test.csv', 
 )
