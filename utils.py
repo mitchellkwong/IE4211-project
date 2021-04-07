@@ -20,7 +20,7 @@ class StandardizedGridSearchCV:
         ],                                  # Metrics to track
         refit = 'neg_mean_squared_error',   # Used to select best candidate
         return_train_score = True,          # Keep train metrics to check overfitting
-        cv = 10,
+        cv = 10,                            # 10-fold cross validation
         n_jobs = -1,                        # Enable multiprocessing on all cores
         verbose = 10,                       # Print as much info as possible
     )
