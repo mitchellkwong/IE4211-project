@@ -88,7 +88,7 @@ def load_datasets(train_file, test_file):
     train, validation = train_test_split(train_val, test_size=0.2, random_state=random_state)
 
     #Further train-test split on train data for model tuning
-    train_train, validation_validation = train_test_split(train, test_size=0.2, random_state=random_state)
+    # train_train, validation_validation = train_test_split(train, test_size=0.2, random_state=random_state)
 
     
     # Fit preprocessor to train data only
@@ -100,7 +100,7 @@ def load_datasets(train_file, test_file):
     validation = preprocessor.transform(validation)
     test = preprocessor.transform(test)
     
-    return train, validation, test, train_train, validation_validation
+    return train, validation, test
 
 # Check that preprocessing steps are reproducible
 foo, *_ = load_datasets(
